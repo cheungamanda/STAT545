@@ -1,1 +1,2 @@
 # STAT545
+UBC STAT545 exercises!
