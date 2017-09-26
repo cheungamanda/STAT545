@@ -124,7 +124,7 @@ p2 + geom_point(aes(colour=continent, size=year))
 
 4. To `p2`, add another layer called `scale_x_log10()`. Make a second plot by redoing the plot in (1), but replacing `gdpPercap` with `log10(gdpPercap)`. What do you notice?
 ```{r}
-p2 + geom_point() + scale_x_log10()
+p2 + geom_point() + scale_x_log10() #this plot easier to interpret since x-value preserved
 ggplot(gapminder, aes(x=log10(gdpPercap), y=lifeExp)) + geom_point()
 ```
 
