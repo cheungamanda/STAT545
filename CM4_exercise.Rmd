@@ -1,0 +1,23 @@
+---
+title: "CM4_exercise"
+author: "Amanda Cheung"
+date: "9/14/2017"
+output: github_document
+---
+
+This is my single sentence.
+
+```{r, fig.width=3, fig.height=3}
+x <- rnorm(100)
+y <- rnorm(100)
+plot(x, y)
+```
+
+```{r}
+summary(x)
+```
+
+```{r this is the third chunk, echo=FALSE}
+x <- rnorm(100)
+```
+
