@@ -1,0 +1,116 @@
+---
+title: "cm010-notes_and_exercises"
+author: "Amanda Cheung"
+date: "10/5/2017"
+output: html_document
+---
+
+## Class meeting 010
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+install.packages("devtools")
+library(devtools)
+install_github("JoeyBernhardt/singer")
+library(singer)
+```
+
+```{r}
+left_join()
+inner_join()
+full_join()
+anti_join()
+semi_join()
+```
+
+```{r}
+data("locations")
+data("songs")
+```
+
+```{r}
+View(songs)
+View(locations)
+```
+
+### Release and Year
+Produce a dataframe with all the albums (`release`), the artists (`artist_name`) and the year (`year`) in which album was published.
+
+```{r}
+relartyear <- full_join(songs, locations, by = "title") %>% 
+  select(release, artist_name.x, year)
+
+View(relartyear)
+```
+
+Alternatively...
+```{r}
+relartyear2 <- left_join(songs, locations, by = "title") %>% 
+  select(release, artist_name.x, year)
+
+View(relartyear2)
+```
+
+OR...
+```{r}
+## only one row with one particular artist_name (no need for .x or .y)
+
+relartyear3 <- inner_join(songs, locations, by = c("title", "artist_name")) %>% 
+  select(release, artist_name, year)
+
+View(inner_join(songs, locations, by = "title"))
+
+View(relartyear3)
+```
+
+### Challenge 1
+
+Identify the number of releases per year.
+```{r}
+inner_join(songs, locations, by="title") %>% 
+  count(year)
+```
+
+## RESHAPING
+
+```{r}
+data("singer_locations")
+glimpse(singer_locations)
+
+?singer_locations
+View(singer_locations)
+```
+
+Year, artist_hotttnesss, artist_familiarity, duration
+
+```{r}
+hfd_y <- singer_locations %>% 
+  select(year, artist_hotttnesss, artist_familiarity, duration)
+
+hfd_y %>% 
+  filter(year > 1900) %>% 
+  ggplot(aes(x=year, y=artist_hotttnesss)) +
+  geom_point()
+```
+
+package `tidyr`, `gather()` : from wide to long
+
+```{r}
+hfd_y_long <- hfd_y %>% 
+  gather(key="Measure", value="Units", artist_hotttnesss:duration)
+
+View(hfd_y)
+View(hfd_y_long)
+
+hfd_y_long %>% 
+  filter(year > 1900) %>% 
+  ggplot(aes(x=year, y=Units)) +
+  geom_point() + 
+  facet_wrap(~ Measure, scales = "free")
+```
+
+**WIDE** dataframe
+**LONG** dataframe
