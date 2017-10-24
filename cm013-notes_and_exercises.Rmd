@@ -192,7 +192,7 @@ data.frame(x = 1:5,
 
 ```{r}
 tibble(x = 1:5,
-       y = x ^ 2,
+       y = x ^ 2, ## allows you to back trace, using x as a variable in another variable
        text = c("alpha", "beta", "gamma", "delta", "epsilon"))
 ## if you're truly "hand coding", tribble() is an alternative
 tribble(
@@ -401,8 +401,9 @@ We can also use the functions that are built-in to `ggplot2`:
 - `scale_colour_distiller` interpolates the colours in a given palette. 
 
 ```{r}
-p1 + scale_colour_brewer(palette="Dark2")
+p1 + scale_fill_brewer(palette="Dark2")
 p2 + scale_colour_distiller(palette="Greens", direction=1)
+## direction=-1 colour palette the other way around
 p3 + scale_colour_distiller(palette="Spectral")
 ```
 
@@ -422,9 +423,45 @@ p3 + scale_colour_viridis()
 
 1. Make histograms of Life Expectancies, facetted by `continent`. Paint the histogram by continent, using a colour palette of your choice from `RColorBrewer`.
 
+```{r}
+library(RColorBrewer)
+
+ggplot(gapminder, aes(x=lifeExp)) +
+  geom_histogram(binwidth=5, aes(y=..density.., fill=continent)) +
+  ## y=..density.. makes scale by proportion and not count
+  facet_wrap(~ continent) +
+  theme_bw() +
+  scale_fill_brewer(palette="Set2")
+```
+
+
+
 2. Make a trend plot/spaghetti plot of life Expectancies over time for each country. Highlight Rwanda in red (ensure the legend shows this, too).
 
+```{r}
+colour_layer <- scale_colour_manual("",
+                                    labels=c("Other Countries", "Rwanda"),
+                                    values=c("black", "red"))
+ggplot(gapminder, aes(x=year, y=lifeExp)) +
+  geom_line(aes(group=country,
+                colour=country=="Rwanda"), alpha=0.2) +
+  colour_layer
+
+```
+
+
 BONUS: make all countries besides Rwanda have alpha transparency of 0.2, and Rwanda be non-transparent.
+
+```{r}
+ggplot(gapminder, aes(year, lifeExp)) +
+  geom_line(aes(group=country,
+                colour=country=="Rwanda",
+                alpha=country=="Rwanda")) +
+  colour_layer +
+  scale_alpha_discrete(range=c(0.2, 1),
+                       guide=FALSE)
+                
+```
 
 
 # 5 Adding layers as a list
