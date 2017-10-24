@@ -1,0 +1,177 @@
+---
+title: "cm101 Notes and Exercises"
+author: "Amanda Cheung"
+date: "10/24/2017"
+output: github_document
+---
+## Regular expressions and character data
+
+### Challenge warm up
+True of False? Why?
+```{r}
+my_string4 <- 'my_string'
+my_string5 <- 'my string'
+my_string6 <- "my_string"
+my_string4 == my_string5
+my_string5 == my_string6
+```
+
+### Load pacakges
+```{r}
+library(singer)
+places <- unique(singer_locations$city) ## return vector of unique cities, no repetitions
+  
+str(places) ## structure
+nchar(c("City", "double", "a very long string")) ## number of characters in a string
+nchar(c("", NA, " ", "      ", " a ","  ", "\t")) ## white spaces are counted
+
+## \t is a tab, string before is a copy and pasted tab
+## don't always trust nchar!
+```
+
+## The tools of the trade
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(glue)
+```
+
+glueing `glue()`
+
+```{r}
+my_name <- "Amanda"
+my_age <- 21
+my_colour <- "blue"
+
+glue("My name is {my_name}.", " My age two years ago was {my_age - 2}.")
+```
+
+```{r}
+paste("My name is",my_name,", My age two years ago was ",my_age - 2)
+## paste and glue are similar
+```
+
+```{r}
+glue("
+My name is
+  {my_name},
+My age two years ago was
+  {my_age - 2}.")
+```
+
+### Challenge
+
+Phrase : Today is Wednesday, October 29, 1986 and the sun shines
+
+Sys.Date()
+glue()
+
+```{r}
+Sys.Date()
+```
+
+```{r}
+phrase <- "Today is {today_date} and the sun shines"
+glue(phrase,
+     today_date = Sys.Date())
+```
+
+```{r}
+glue(phrase,
+     today_date = format(Sys.Date(), "%A, %B %d, %Y"))
+```
+
+'glue_data'
+
+```{r}
+singer_locations %>% 
+  glue_data("{artist_name} is from {city}.") %>% 
+  head()
+```
+
+## Stringr
+
+```{r}
+getNamespaceExports("stringr")
+```
+
+```{r}
+library(htmlwidgets)
+getNamespaceExports("stringr") %>% 
+  str_view("str_")
+```
+
+
+```{r}
+getNamespaceExports("stringr") %>% 
+  str_subset("str_")
+```
+
+### Challenge
+
+```{r}
+places <- unique(singer_locations$city)
+```
+
+And, let's get all the places containing the string "york".
+
+```{r}
+places %>%
+  str_to_lower() %>% 
+  str_subset("york")
+```
+
+### Regular Expressions
+
+```{r}
+places %>% 
+  str_subset("[Yy]ork") ## whatever is inside []
+
+## and lowercase "ork"
+## there is an instance with all caps, so the one below and above have an extra result
+```
+
+```{r}
+places %>% 
+  str_subset(coll("york", ignore_case = TRUE))
+```
+
+```{r}
+places %>% 
+  str_subset("York$") ## where york ends the string
+```
+
+```{r}
+places %>% 
+  str_subset("^York") ## where york starts the string
+```
+
+
+### Challenge
+
+Get all places where their name contains some digits. 
+
+```{r}
+places %>% 
+  str_subset("[:digit:]")
+```
+
+```{r}
+places %>% 
+  str_subset("B.a") ## has the character B and then a
+```
+
+```{r}
+places %>% 
+  str_subset("B.a?") ## has the character B and then 0 or 1 a
+```
+
+```{r}
+places %>% 
+  str_subset("[Nn]ew [Yy]ork")
+```
+
+
+
+
